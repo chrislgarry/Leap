@@ -7,6 +7,17 @@
 // @require     http://rishibaldawa.com/tech/jqfloat.min.js
 // ==/UserScript===================
 
+
+// Define constants================
+var constants = new Object();
+    constants.X = 0;
+    constants.Y = 1;
+    constants.Z = 2;
+    constants.NOTFOUND = -1;
+    constants.SCROLL_BY = 50;
+// ==/Define constants=============
+
+
 console.log("Loaded Leap Motion Browsing Script");
 
 // append cursor (red css box)
@@ -24,7 +35,7 @@ var previousGestureTime = {};
 var controllerOptions = {enableGestures: true};
 
 // If amazon.com page is detected
-if(document.URL.indexOf("amazon.com") !== -1) { 
+if(document.URL.indexOf("amazon.com") !== constants.NOTFOUND) { 
     
     // Wait until page is fully loaded
     $(document).ready(function() {
@@ -114,11 +125,11 @@ function shouldIgnoreThisGesture(gestureType) {
 functions to detect left and right swipes
 */
 function isSwipeLeft(direction) {
-    return Math.abs(direction[0]) > 0.9 && direction[0] < 0.0;
+    return Math.abs(direction[constants.X]) > 0.9 && direction[constants.X] < 0.0;
 }
 
 function isSwipeRight(direction) {
-    return Math.abs(direction[0]) > 0.9 && direction[0] > 0.0;
+    return Math.abs(direction[constants.X]) > 0.9 && direction[constants.X] > 0.0;
 }
 
 // Not currently being used
@@ -131,8 +142,7 @@ function pauseForGestures() {
 }
 
 function vectorClockwiseY(vector) {
-    // 1 is Y axis
-    return ( vector[1] < 0 );
+    return ( vector[constants.Y] < 0 );
 }
 
 function togglePause() {
@@ -143,24 +153,24 @@ function vectorToString(vector, digits) {
     if (typeof digits === "undefined") {
         digits = 1;
     }
-    return "(" + vector[0].toFixed(digits) + ", "
-    + vector[1].toFixed(digits) + ", "
-    + vector[2].toFixed(digits) + ")";
+    return "(" + vector[constants.X].toFixed(digits) + ", "
+    + vector[constants.Y].toFixed(digits) + ", "
+    + vector[constants.Z].toFixed(digits) + ")";
 }
 
 function getNormalizedX(vector) {
     
     var middle = (window.innerWidth/2);
-    var mapped = middle + (8*vector[0]);    
+    var mapped = middle + (8*vector[constants.X]);    
     return mapped.toFixed();
 }
 
 function getNormalizedY(vector) {
     
     var height = window.innerHeight;
-    var mapped = height - 5*vector[1] + 150;
+    var mapped = height - 5*vector[constants.Y] + 150;
     
-    console.log("vector y: " + vector[1]);
+    console.log("vector y: " + vector[constants.X]);
     console.log("bottom: " + window.innerHeight);
     console.log("mapped: " + mapped);
     return mapped.toFixed();
@@ -181,8 +191,6 @@ function moveBoxTo(tipPosition) {
     box.css({ 'left': leftValue + 'px', 'top': topValue + 'px' });
 }
 
-// scrollBy const
-var SCROLL_BY = 50; //px //TODO! Move to global constant object
 
 function scrollIfOutOfBoundary(tipPosition) {
     scrollUpIfUnderflow(tipPosition);
@@ -193,25 +201,25 @@ function scrollIfOutOfBoundary(tipPosition) {
 
 function scrollUpIfUnderflow(tipPosition) {
     if(getNormalizedY(tipPosition) < 0) {
-        window.scrollBy(0, -1 * SCROLL_BY);
+        window.scrollBy(0, -1 * constants.SCROLL_BY);
     }
 }
 
 function scrollDownIfOverflow(tipPosition) {
     if(getNormalizedY(tipPosition) > window.innerHeight) {
-        window.scrollBy(0, SCROLL_BY);
+        window.scrollBy(0, constants.SCROLL_BY);
     }
 }
 
 function scrollLeftIfUnderflow(tipPosition) {
     if(getNormalizedX(tipPosition) < 0) {
-        window.scrollBy(-1 * SCROLL_BY,0);
+        window.scrollBy(-1 * constants.SCROLL_BY,0);
     }
 }
 
 function scrollRightIfOverflow(tipPosition) {
     if(getNormalizedX(tipPosition) > window.innerWidth) {
-        window.scrollBy(SCROLL_BY, 0);
+        window.scrollBy(constants.SCROLL_BY, 0);
     }
 }
 
