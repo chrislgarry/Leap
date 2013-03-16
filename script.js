@@ -1,19 +1,20 @@
-// ==UserScript==
-// @name        Leap Motion Reddit Browsing
+// ==UserScript====================
+// @name        Leap Amazon Browser
 // @include     http://*.amazon.com/*
 // @version     1
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
 // @require     http://rishibaldawa.com/tech/leap.min.js
 // @require     http://rishibaldawa.com/tech/jqfloat.min.js
-// ==/UserScript==
-console.log("Loaded Leap Motion Reddit Browsing User Script");
+// ==/UserScript===================
 
-// append the red box and store it in
+console.log("Loaded Leap Motion Browsing Script");
+
+// append cursor (red css box)
 $('body').prepend('<div class="redsquare" style="height:10px; width:10px; background:red; position:fixed; overflow:hidden; left: 150px; top: 150px; z-index: 9999"/>');
 var box = $(($('div.redsquare')).get(0));
 
 
-// Store frame for motion functions
+// Store frame for motion functions. Not currently used.
 var previousFrame;
 var paused = false;
 var pauseOnGesture = false;
@@ -22,23 +23,28 @@ var previousGestureTime = {};
 // Setup Leap loop with frame callback function
 var controllerOptions = {enableGestures: true};
 
-//on reddit control
+// If amazon.com page is detected
 if(document.URL.indexOf("amazon.com") !== -1) { 
+    
+    // Wait until page is fully loaded
     $(document).ready(function() {
         
+        // When link or button is clicked, highlight it red
         $('button,a').click(function () {
-            $(this).css ('background', 'red'); // to show demo
+            $(this).css ('background', 'red');
             var clickEvent  = document.createEvent ('MouseEvents');
             clickEvent.initEvent ('click', true, true);
             this.dispatchEvent (clickEvent);
         });
         
+        // If leap controller is detected
         if(typeof Leap !== 'undefined') {
             console.log("leap found");
             Leap.loop(controllerOptions, function(frame) {
                 
-                
+                // If valid gesture is detected
                 if (typeof frame.gestures !== 'undefined' && frame.gestures.length > 0) {
+                    
                     var i = 0;
                     
                     for (var i = 0; i < frame.gestures.length; i++) {
@@ -93,7 +99,7 @@ if(document.URL.indexOf("amazon.com") !== -1) {
         }
     });
 } else {
-    console.log("amazon not found." + document.URL);
+    console.log("amazon.com not found." + document.URL);
 }
 
 /*
@@ -115,6 +121,7 @@ function isSwipeRight(direction) {
     return Math.abs(direction[0]) > 0.9 && direction[0] > 0.0;
 }
 
+// Not currently being used
 function pauseForGestures() {
     if (document.getElementById("pauseOnGesture").checked) {
         pauseOnGesture = true;
@@ -175,7 +182,7 @@ function moveBoxTo(tipPosition) {
 }
 
 // scrollBy const
-var SCROLL_BY = 50; // px
+var SCROLL_BY = 50; //px //TODO! Move to global constant object
 
 function scrollIfOutOfBoundary(tipPosition) {
     scrollUpIfUnderflow(tipPosition);
