@@ -1,4 +1,4 @@
 Leap
 ====
 
-Leap Motion controller project.
+Control your web browser using gestures.
